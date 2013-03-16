@@ -11,112 +11,134 @@ import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 public abstract class Step {
-	protected Integer unitID;
-	protected StateView state;
-	
-	protected Step(Integer unitID, StateView state) {
+    protected Integer unitID;
+    protected StateView state;
+
+    protected Step(Integer unitID, StateView state) {
         this.unitID = unitID;
         this.state = state;
-	}
+    }
 
-	abstract Map<Integer, Action> getActions();
-	
-	@Override
-	public abstract String toString();
+    abstract Map<Integer, Action> getActions();
 
-	protected UnitView getTownHall() {
-		for (UnitView u : state.getAllUnits()) {
-			if (u.getTemplateView().getName().equals("TownHall")) {
-				return u;
-			}
-		}
-		
-		return null;
-	}
+    @Override
+    public abstract String toString();
 
-	protected List<UnitView> getPeasants() {
-		List<UnitView> peasantLocations = new ArrayList<UnitView>();
+    protected UnitView getTownHall() {
+        for (UnitView u : state.getAllUnits()) {
+            if (u.getTemplateView().getName().equals("TownHall")) {
+                return u;
+            }
+        }
+        
+        return null;
+    }
 
-		for (UnitView u : state.getAllUnits()) {
-			if (u.getTemplateView().getName().equals("Peasant")) {
-				peasantLocations.add(u);
-			}
-		}
+    protected List<UnitView> getPeasants() {
+        List<UnitView> peasantLocations = new ArrayList<UnitView>();
 
-		return peasantLocations;
-	}
+        for (UnitView u : state.getAllUnits()) {
+            if (u.getTemplateView().getName().equals("Peasant")) {
+                peasantLocations.add(u);
+            }
+        }
+
+        return peasantLocations;
+    }
 
     public class Deposit extends Step {
-    	protected Deposit(Integer unitID, StateView state) {
-    		super(unitID, state);
-    	}
+        protected Deposit(Integer unitID, StateView state) {
+            super(unitID, state);
+        }
 
-		@Override
-		Map<Integer, Action> getActions() {
-			Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
-			
-			toReturn.put(unitID, Action.createCompoundDeposit(unitID, getTownHall().getID()));
-			
-			return toReturn;
-		}
+        @Override
+        Map<Integer, Action> getActions() {
+            Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
+            
+            toReturn.put(unitID, Action.createCompoundDeposit(unitID, getTownHall().getID()));
+            
+            return toReturn;
+        }
 
-		@Override
-		public String toString() {
-			return "The peasant with ID " + unitID + " deposits to the Town Hall.";
-		}
+        @Override
+        public String toString() {
+            return "The peasant with ID " + unitID + " deposits to the Town Hall.";
+        }
     }
 
     public class HarvestGold extends Step {
-    	protected HarvestGold(Integer unitID, StateView state) {
-    		super(unitID, state);
-    	}
+        private Integer goldMineID;
 
-		@Override
-		Map<Integer, Action> getActions() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        protected HarvestGold(Integer unitID, Integer goldMineID, StateView state) {
+            super(unitID, state);
+            
+            this.goldMineID = goldMineID;
+        }
 
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        Map<Integer, Action> getActions() {
+            Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
+
+            toReturn.put(unitID, Action.createCompoundGather(unitID, goldMineID));
+
+            return toReturn;
+        }
+
+        @Override
+        public String toString() {
+            return "The peasant with ID " + unitID + 
+                    " gathers gold from the gold mine with ID " + goldMineID + ".";
+        }
     }
 
     public class HarvestWood extends Step {
-    	protected HarvestWood(Integer unitID, StateView state) {
-    		super(unitID, state);
-    	}
+        private Integer forrestID;
 
-		@Override
-		Map<Integer, Action> getActions() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        protected HarvestWood(Integer unitID, Integer forrestID, StateView state) {
+            super(unitID, state);
 
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+            this.forrestID = forrestID;
+        }
+
+        @Override
+        Map<Integer, Action> getActions() {
+            Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
+
+            toReturn.put(unitID, Action.createCompoundGather(unitID, forrestID));
+
+            return toReturn;
+        }
+
+        @Override
+        public String toString() {
+            return "The peasant with ID " + unitID + 
+                    " gathers wood from the forrest with ID " + forrestID + ".";
+        }
     }
 
     public class MoveTo extends Step {
-    	protected MoveTo(Integer unitID, StateView state) {
-    		super(unitID, state);
-    	}
+        private Square destination;
 
-		@Override
-		Map<Integer, Action> getActions() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        protected MoveTo(Integer unitID, Square destination, StateView state) {
+            super(unitID, state);
 
-		@Override
-		public String toString() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+            this.destination = destination;
+        }
+
+        @Override
+        Map<Integer, Action> getActions() {
+            Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
+
+            toReturn.put(unitID, Action.createCompoundMove(unitID, destination.x, destination.y));
+
+            return toReturn;
+        }
+
+        @Override
+        public String toString() {
+            return "The peasant with ID " + unitID + " moves from " + 
+                    new Square(state.getUnit(unitID)).toString() +
+                     " to " + destination.toString() + ".";
+        }
     }
 }

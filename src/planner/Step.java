@@ -21,6 +21,8 @@ public abstract class Step {
 
     abstract Map<Integer, Action> getActions();
 
+    abstract Boolean arePrerequisitesMet(State state);
+
     @Override
     public abstract String toString();
 
@@ -64,6 +66,16 @@ public abstract class Step {
         public String toString() {
             return "The peasant with ID " + unitID + " deposits to the Town Hall.";
         }
+
+        /**
+         * The prerequisites for a Deposit operation are that the peasant who will
+         * be making the deposit must be next to the Town Hall.
+         */
+		@Override
+		Boolean arePrerequisitesMet(State state) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public class HarvestGold extends Step {
@@ -89,6 +101,12 @@ public abstract class Step {
             return "The peasant with ID " + unitID + 
                     " gathers gold from the gold mine with ID " + goldMineID + ".";
         }
+
+		@Override
+		Boolean arePrerequisitesMet(State state) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public class HarvestWood extends Step {
@@ -114,6 +132,12 @@ public abstract class Step {
             return "The peasant with ID " + unitID + 
                     " gathers wood from the forrest with ID " + forrestID + ".";
         }
+
+		@Override
+		Boolean arePrerequisitesMet(State state) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     public class MoveTo extends Step {
@@ -140,5 +164,11 @@ public abstract class Step {
                     new Square(state.getUnit(unitID)).toString() +
                      " to " + destination.toString() + ".";
         }
+
+		@Override
+		Boolean arePrerequisitesMet(State state) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

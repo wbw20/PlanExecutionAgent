@@ -32,7 +32,7 @@ public abstract class Step {
                 return u;
             }
         }
-        
+
         return null;
     }
 
@@ -71,11 +71,10 @@ public abstract class Step {
          * The prerequisites for a Deposit operation are that the peasant who will
          * be making the deposit must be next to the Town Hall.
          */
-		@Override
-		Boolean arePrerequisitesMet(State state) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        Boolean arePrerequisitesMet(State state) {
+            return state.getUnitBy(unitID).getLocation().isAdjacent(new Square(getTownHall()));
+        }
     }
 
     public class HarvestGold extends Step {
@@ -102,27 +101,31 @@ public abstract class Step {
                     " gathers gold from the gold mine with ID " + goldMineID + ".";
         }
 
-		@Override
-		Boolean arePrerequisitesMet(State state) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        /**
+         * The prerequisites for a HarvestGold operation are that the peasant who will
+         * be harvesting is next to a gold mine and that gold mine has some gold.
+         */
+        @Override
+        Boolean arePrerequisitesMet(State state) {
+            return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(goldMineID).getLocation()) &&
+                    state.getUnitBy(goldMineID).getGold() > 0;
+        }
     }
 
     public class HarvestWood extends Step {
-        private Integer forrestID;
+        private Integer forestID;
 
         protected HarvestWood(Integer unitID, Integer forrestID, StateView state) {
             super(unitID, state);
 
-            this.forrestID = forrestID;
+            this.forestID = forrestID;
         }
 
         @Override
         Map<Integer, Action> getActions() {
             Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
 
-            toReturn.put(unitID, Action.createCompoundGather(unitID, forrestID));
+            toReturn.put(unitID, Action.createCompoundGather(unitID, forestID));
 
             return toReturn;
         }
@@ -130,14 +133,18 @@ public abstract class Step {
         @Override
         public String toString() {
             return "The peasant with ID " + unitID + 
-                    " gathers wood from the forrest with ID " + forrestID + ".";
+                    " gathers wood from the forest with ID " + forestID + ".";
         }
 
-		@Override
-		Boolean arePrerequisitesMet(State state) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        /**
+         * The prerequisites for a HarvestWood operation are that the peasant who will
+         * be harvesting is next to a forest and that forest has some wood.
+         */
+        @Override
+        Boolean arePrerequisitesMet(State state) {
+            return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(forestID).getLocation()) &&
+                    state.getUnitBy(forestID).getWood() > 0;
+        }
     }
 
     public class MoveTo extends Step {
@@ -165,10 +172,13 @@ public abstract class Step {
                      " to " + destination.toString() + ".";
         }
 
-		@Override
-		Boolean arePrerequisitesMet(State state) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        /**
+         * The prerequisites for moving somewhere is that there is nothing there at 
+         * the moment.
+         */
+        @Override
+        Boolean arePrerequisitesMet(State state) {
+            return state.getUnitIn(destination) == null;
+        }
     }
 }

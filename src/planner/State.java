@@ -22,6 +22,10 @@ public class State {
     public final static String FOREST = "forest";
     public final static String GOLD_MINE = "gold mine";
 
+    /* State Attributes */
+    public static Integer BOARD_DIMENSION_X;
+    public static Integer BOARD_DIMENSION_Y;
+
     private Set<Unit> units;
 
     public State() {
@@ -66,6 +70,27 @@ public class State {
         }
 
         return toReturn;
+    }
+
+    public Set<Square> getEmptyTiles() {
+        Set<Square> occupiedSquares = new HashSet<Square>();
+        Set<Square> unnoccupiedSquares = new HashSet<Square>();
+
+        for (Unit unit : getUnits()) {
+            occupiedSquares.add(unit.getLocation());
+        }
+
+        for (int x = 0; x < BOARD_DIMENSION_X; x++) {
+            for (int y = 0; y < BOARD_DIMENSION_Y; y++) {
+                Square square = new Square(x, y);
+
+                if (!occupiedSquares.contains(square)) {
+                    unnoccupiedSquares.add(square);
+                }
+            }
+        }
+
+        return unnoccupiedSquares;
     }
 
     public class Unit {

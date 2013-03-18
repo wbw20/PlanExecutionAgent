@@ -8,6 +8,9 @@ import java.util.Set;
 
 import planner.State.Unit;
 import planner.steps.Deposit;
+import planner.steps.HarvestGold;
+import planner.steps.HarvestWood;
+import planner.steps.MoveTo;
 import planner.steps.Step;
 
 import edu.cwru.sepia.environment.model.state.State.StateView;
@@ -143,15 +146,39 @@ public class Planner {
         Set<Unit> forests = state.getAllOf(State.FOREST);
 
         for (Unit peasant : peasants) {
+            Set<Step> stepsforPeasant = new HashSet<Step>();
+
             /* Deposit */
             for (Unit townhall : townhalls) {
                 Step deposit = new Deposit(peasant.getID(), state);
                 if (deposit.arePrerequisitesMet()) {
-                    
+                    stepsforPeasant.add(deposit);
                 }
             }
+
+            /* Harvest Wood */
+            for (Unit forest: forests) {
+                Step harvest = new HarvestWood(peasant.getID(), forest.getID(), state);
+                if (harvest.arePrerequisitesMet()) {
+                    stepsforPeasant.add(harvest);
+                }
+            }
+
+            /* Harvest Gold */
+            for (Unit mine : goldMines) {
+                Step harvest = new HarvestGold(peasant.getID(), mine.getID(), state);
+                if (harvest.arePrerequisitesMet()) {
+                    stepsforPeasant.add(harvest);
+                }
+            }
+
+            /* Move To */
+            for (Square unnoccupied : state.getEmptyTiles()) {
+                Step moveTo = new MoveTo(peasant.getID(), unnoccupied, state);
+                stepsforPeasant.add(moveTo);
+            }
         }
-        
+
         return possibleMoves;
     }
 

@@ -1,7 +1,14 @@
 package planner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import planner.State.Unit;
+import planner.steps.Deposit;
+import planner.steps.Step;
 
 import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
@@ -24,9 +31,17 @@ public class Planner {
         this.goal = goal;
     }
 
-    static class Square {
-        Integer x;
-        Integer y;
+    public List<Step> findPathToGoal() {
+        List<Step> steps = new ArrayList<Step>();
+        
+        
+        
+        return steps;
+    }
+
+    public static class Square {
+    	public Integer x;
+        public Integer y;
         Integer distance;
 
         Square(UnitView unit) {
@@ -57,7 +72,7 @@ public class Planner {
             return "[" + x + ", " + y + "]";
         }
 
-        boolean isAdjacent(Square square) {
+        public boolean isAdjacent(Square square) {
             return Math.abs(this.x - square.x) < 2 && Math.abs(this.y - square.y) < 2;
         }
 
@@ -117,6 +132,27 @@ public class Planner {
             adjacent.add(this);
             return adjacent;
         }
+    }
+
+    private static Set<Map<Unit, Step>> getPossibleMoves(State state) {
+        Set<Map<Unit, Step>> possibleMoves = new HashSet<Map<Unit, Step>>();
+
+        Set<Unit> peasants = state.getAllOf(State.PEASANT);
+        Set<Unit> townhalls = state.getAllOf(State.TOWN_HALL);
+        Set<Unit> goldMines = state.getAllOf(State.GOLD_MINE);
+        Set<Unit> forests = state.getAllOf(State.FOREST);
+
+        for (Unit peasant : peasants) {
+            /* Deposit */
+            for (Unit townhall : townhalls) {
+                Step deposit = new Deposit(peasant.getID(), state);
+                if (deposit.arePrerequisitesMet()) {
+                    
+                }
+            }
+        }
+        
+        return possibleMoves;
     }
 
     private static boolean isOccupied(Square square, StateView state) {

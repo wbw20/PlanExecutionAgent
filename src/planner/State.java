@@ -10,26 +10,33 @@ import planner.Planner.Square;
 public class State {
 
     /* Static Keys */
-    private final String ID = "id";
-    private final String WOOD = "wood";
-    private final String GOLD = "gold";
-    private final String LOCATION = "location";
+    public final static String ID = "id";
+    public final static String WOOD = "wood";
+    public final static String GOLD = "gold";
+    public final static String LOCATION = "location";
+    public final static String TYPE = "type";
+
+    /* Static Values */
+    public final static String TOWN_HALL = "townhall";
+    public final static String PEASANT = "peasant";
+    public final static String FOREST = "forest";
+    public final static String GOLD_MINE = "gold mine";
 
     private Set<Unit> units;
 
-    protected State() {
+    public State() {
         units = new HashSet<Unit>();
     }
 
-    protected void add(Unit unit) {
+    public void add(Unit unit) {
         units.add(unit);
     }
 
-    protected Set<Unit> getUnits() {
+    public Set<Unit> getUnits() {
         return units;
     }
 
-    protected Unit getUnitBy(Integer id) {
+    public Unit getUnitBy(Integer id) {
         for(Unit unit : units) {
             if (unit.dynamicValues.get(ID).equals(id)) {
                 return unit;
@@ -39,7 +46,7 @@ public class State {
         return null;
     }
 
-    protected Unit getUnitIn(Square square) {
+    public Unit getUnitIn(Square square) {
         for (Unit unit : units) {
             if (unit.getLocation().equals(square)) {
                 return unit;
@@ -49,23 +56,43 @@ public class State {
         return null;
     }
 
-    protected class Unit {
-        protected Map<String, Object> dynamicValues;
+    public Set<Unit> getAllOf(String type) {
+        Set<Unit> toReturn = new HashSet<Unit>();
 
-        protected Unit() {
+        for (Unit unit : units) {
+            if (unit.getType().equals(type)) {
+                toReturn.add(unit);
+            }
+        }
+
+        return toReturn;
+    }
+
+    public class Unit {
+        public Map<String, Object> dynamicValues;
+
+        public Unit() {
             dynamicValues = new HashMap<String, Object>();
         }
 
-        protected Square getLocation() {
+        public Integer getID() {
+            return (Integer)dynamicValues.get(ID);
+        }
+
+        public Square getLocation() {
             return (Square)dynamicValues.get(LOCATION);
         }
 
-        protected Integer getGold() {
+        public Integer getGold() {
             return (Integer)dynamicValues.get(GOLD);
         }
 
-        protected Integer getWood() {
+        public Integer getWood() {
             return (Integer)dynamicValues.get(WOOD);
+        }
+
+        public String getType() {
+            return (String)dynamicValues.get(TYPE);
         }
     }
 }

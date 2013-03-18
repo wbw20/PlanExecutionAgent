@@ -6,6 +6,7 @@ import java.util.Map;
 import planner.Planner;
 import planner.State;
 import planner.Planner.Square;
+import planner.State.Unit;
 import edu.cwru.sepia.action.Action;
 
 public class MoveTo extends Step {
@@ -40,5 +41,42 @@ public class MoveTo extends Step {
     @Override
     public Boolean arePrerequisitesMet() {
         return state.getUnitIn(destination) == null;
+    }
+
+    /**
+     * A MoveTo is only worth something if the destination is next to a resource that
+     * we need, or our peasant is carrying something and our destination is next to
+     * the Town Hall
+     */
+    @Override
+    public Integer heuristicValue(State goal) {
+        Integer toReturn = 0;
+        
+        //The peasant is carrying something
+        if (state.getUnitBy(unitID).getPayloadSize() > 0) {
+            for (Unit townhall : state.getAllOf(State.TOWN_HALL)) {
+                if (destination.isAdjacent(townhall.getLocation())) {
+                    toReturn += BIG_VALUE;
+                }
+            }
+        } else { //The peasant is empty-handed
+            if (goal.WOOD_AMOUNT > state.WOOD_AMOUNT) { //If we need more wood
+                for (Unit forest : state.getAllOf(State.FOREST)) {
+                    if (forest.getLocation().isAdjacent(destination)) {
+                        toReturn += BIG_VALUE;
+                    }
+                }
+            }
+
+            if (goal.GOLD_AMOUNT > state.GOLD_AMOUNT) { //If we need more gold
+                for (Unit mine : state.getAllOf(State.GOLD_MINE)) {
+                    if (mine.getLocation().isAdjacent(destination)) {
+                        toReturn += BIG_VALUE;
+                    }
+                }
+            }
+        }
+
+        return toReturn;
     }
 }

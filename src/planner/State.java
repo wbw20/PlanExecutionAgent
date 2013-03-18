@@ -14,6 +14,7 @@ public class State {
     public final static String WOOD = "wood";
     public final static String GOLD = "gold";
     public final static String LOCATION = "location";
+    public final static String PAYLOAD_SIZE = "payload size";
     public final static String TYPE = "type";
 
     /* Static Values */
@@ -25,6 +26,8 @@ public class State {
     /* State Attributes */
     public static Integer BOARD_DIMENSION_X;
     public static Integer BOARD_DIMENSION_Y;
+    public static Integer WOOD_AMOUNT;
+    public static Integer GOLD_AMOUNT;
 
     private Set<Unit> units;
 
@@ -114,6 +117,10 @@ public class State {
 
         public Integer getWood() {
             return (Integer)dynamicValues.get(WOOD);
+        }
+
+        public Integer getPayloadSize() {
+            return (Integer)dynamicValues.get(PAYLOAD_SIZE);
         }
 
         public String getType() {

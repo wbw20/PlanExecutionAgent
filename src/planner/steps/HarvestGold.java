@@ -40,4 +40,10 @@ public class HarvestGold extends Step {
         return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(goldMineID).getLocation()) &&
                 state.getUnitBy(goldMineID).getGold() > 0;
     }
+
+	@Override
+	public Integer heuristicValue(State goal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

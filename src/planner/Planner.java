@@ -1,6 +1,7 @@
 package planner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,53 @@ public class Planner {
         
         
         return steps;
+    }
+
+    private static Map<Unit, Set<Step>> getPossibleMoves(State state) {
+        Map<Unit, Set<Step>> possibleMoves = new HashMap<Unit, Set<Step>>();
+
+        Set<Unit> peasants = state.getAllOf(State.PEASANT);
+        Set<Unit> townhalls = state.getAllOf(State.TOWN_HALL);
+        Set<Unit> goldMines = state.getAllOf(State.GOLD_MINE);
+        Set<Unit> forests = state.getAllOf(State.FOREST);
+
+        for (Unit peasant : peasants) {
+            Set<Step> stepsforPeasant = new HashSet<Step>();
+
+            /* Deposit */
+            for (Unit townhall : townhalls) {
+                Step deposit = new Deposit(peasant.getID(), state);
+                if (deposit.arePrerequisitesMet()) {
+                    stepsforPeasant.add(deposit);
+                }
+            }
+
+            /* Harvest Wood */
+            for (Unit forest: forests) {
+                Step harvest = new HarvestWood(peasant.getID(), forest.getID(), state);
+                if (harvest.arePrerequisitesMet()) {
+                    stepsforPeasant.add(harvest);
+                }
+            }
+
+            /* Harvest Gold */
+            for (Unit mine : goldMines) {
+                Step harvest = new HarvestGold(peasant.getID(), mine.getID(), state);
+                if (harvest.arePrerequisitesMet()) {
+                    stepsforPeasant.add(harvest);
+                }
+            }
+
+            /* Move To */
+            for (Square unnoccupied : state.getEmptyTiles()) {
+                Step moveTo = new MoveTo(peasant.getID(), unnoccupied, state);
+                stepsforPeasant.add(moveTo);
+            }
+
+            possibleMoves.put(peasant, stepsforPeasant);
+        }
+
+        return possibleMoves;
     }
 
     public static class Square {
@@ -135,51 +183,6 @@ public class Planner {
             adjacent.add(this);
             return adjacent;
         }
-    }
-
-    private static Set<Map<Unit, Step>> getPossibleMoves(State state) {
-        Set<Map<Unit, Step>> possibleMoves = new HashSet<Map<Unit, Step>>();
-
-        Set<Unit> peasants = state.getAllOf(State.PEASANT);
-        Set<Unit> townhalls = state.getAllOf(State.TOWN_HALL);
-        Set<Unit> goldMines = state.getAllOf(State.GOLD_MINE);
-        Set<Unit> forests = state.getAllOf(State.FOREST);
-
-        for (Unit peasant : peasants) {
-            Set<Step> stepsforPeasant = new HashSet<Step>();
-
-            /* Deposit */
-            for (Unit townhall : townhalls) {
-                Step deposit = new Deposit(peasant.getID(), state);
-                if (deposit.arePrerequisitesMet()) {
-                    stepsforPeasant.add(deposit);
-                }
-            }
-
-            /* Harvest Wood */
-            for (Unit forest: forests) {
-                Step harvest = new HarvestWood(peasant.getID(), forest.getID(), state);
-                if (harvest.arePrerequisitesMet()) {
-                    stepsforPeasant.add(harvest);
-                }
-            }
-
-            /* Harvest Gold */
-            for (Unit mine : goldMines) {
-                Step harvest = new HarvestGold(peasant.getID(), mine.getID(), state);
-                if (harvest.arePrerequisitesMet()) {
-                    stepsforPeasant.add(harvest);
-                }
-            }
-
-            /* Move To */
-            for (Square unnoccupied : state.getEmptyTiles()) {
-                Step moveTo = new MoveTo(peasant.getID(), unnoccupied, state);
-                stepsforPeasant.add(moveTo);
-            }
-        }
-
-        return possibleMoves;
     }
 
     private static boolean isOccupied(Square square, StateView state) {

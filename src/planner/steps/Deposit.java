@@ -34,4 +34,10 @@ public class Deposit extends Step {
     public Boolean arePrerequisitesMet() {
         return state.getUnitBy(unitID).getLocation().isAdjacent(getTownHall().getLocation());
     }
+
+	@Override
+	public Integer heuristicValue(State goal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -40,4 +40,10 @@ public class HarvestWood extends Step {
         return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(forestID).getLocation()) &&
                 state.getUnitBy(forestID).getWood() > 0;
     }
+
+	@Override
+	public Integer heuristicValue(State goal) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

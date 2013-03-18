@@ -13,6 +13,9 @@ import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 public abstract class Step {
+    public static Integer BIG_VALUE = 10;
+    public static Integer SMALL_REWARD = 1;
+
     protected Integer unitID;
     protected State state;
 
@@ -24,6 +27,8 @@ public abstract class Step {
     abstract Map<Integer, Action> getActions();
 
     public abstract Boolean arePrerequisitesMet();
+
+    public abstract Integer heuristicValue(State goal);
 
     @Override
     public abstract String toString();

@@ -14,10 +14,11 @@ import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 public abstract class Step {
     public static Integer BIG_VALUE = 10;
-    public static Integer SMALL_REWARD = 1;
+    public static Integer MEDIUM_VALUE = 5;
+    public static Integer SMALL_VALUE = 1;
 
-    protected Integer unitID;
-    protected State state;
+    public Integer unitID;
+    public State state;
 
     protected Step(Integer unitID, State state) {
         this.unitID = unitID;

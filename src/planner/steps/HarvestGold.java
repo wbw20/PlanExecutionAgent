@@ -8,7 +8,7 @@ import planner.State;
 import edu.cwru.sepia.action.Action;
 
 public class HarvestGold extends Step {
-    private Integer goldMineID;
+    public Integer goldMineID;
 
     public HarvestGold(Integer unitID, Integer goldMineID, State state) {
         super(unitID, state);
@@ -41,9 +41,14 @@ public class HarvestGold extends Step {
                 state.getUnitBy(goldMineID).getGold() > 0;
     }
 
-	@Override
-	public Integer heuristicValue(State goal) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Integer heuristicValue(State goal) {
+        Integer toReturn = 0;
+
+        if (goal.GOLD_AMOUNT > state.GOLD_AMOUNT) {
+            toReturn += MEDIUM_VALUE;
+        }
+
+        return toReturn;
+    }
 }

@@ -15,6 +15,7 @@ public class State {
     public final static String GOLD = "gold";
     public final static String LOCATION = "location";
     public final static String PAYLOAD_SIZE = "payload size";
+    public final static String PAYLOAD_TYPE = "payload type";
     public final static String TYPE = "type";
 
     /* Static Values */
@@ -26,8 +27,9 @@ public class State {
     /* State Attributes */
     public static Integer BOARD_DIMENSION_X;
     public static Integer BOARD_DIMENSION_Y;
-    public static Integer WOOD_AMOUNT;
-    public static Integer GOLD_AMOUNT;
+
+    public Integer WOOD_AMOUNT;
+    public Integer GOLD_AMOUNT;
 
     private Set<Unit> units;
 
@@ -123,8 +125,36 @@ public class State {
             return (Integer)dynamicValues.get(PAYLOAD_SIZE);
         }
 
+        public String getPayloadType() {
+            return (String)dynamicValues.get(PAYLOAD_TYPE);
+        }
+
         public String getType() {
             return (String)dynamicValues.get(TYPE);
+        }
+
+        public void setLocation(Square square) {
+            dynamicValues.put(LOCATION, square);
+        }
+
+        public void setGold(Integer gold) {
+            dynamicValues.put(GOLD, gold);
+        }
+
+        public void setWood(Integer wood) {
+            dynamicValues.put(WOOD, wood);
+        }
+
+        public void setPayloadSize(Integer size) {
+            dynamicValues.put(PAYLOAD_SIZE, size);
+        }
+
+        public void setPayloadType(String type) {
+            dynamicValues.put(PAYLOAD_TYPE, type);
+        }
+
+        public void setType(String type) {
+            dynamicValues.put(TYPE, type);
         }
     }
 }

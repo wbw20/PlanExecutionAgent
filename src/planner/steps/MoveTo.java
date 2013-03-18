@@ -10,7 +10,7 @@ import planner.State.Unit;
 import edu.cwru.sepia.action.Action;
 
 public class MoveTo extends Step {
-    private Square destination;
+    public Square destination;
 
     public MoveTo(Integer unitID, Square destination, State state) {
         super(unitID, state);
@@ -51,7 +51,7 @@ public class MoveTo extends Step {
     @Override
     public Integer heuristicValue(State goal) {
         Integer toReturn = 0;
-        
+
         //The peasant is carrying something
         if (state.getUnitBy(unitID).getPayloadSize() > 0) {
             for (Unit townhall : state.getAllOf(State.TOWN_HALL)) {
@@ -63,7 +63,7 @@ public class MoveTo extends Step {
             if (goal.WOOD_AMOUNT > state.WOOD_AMOUNT) { //If we need more wood
                 for (Unit forest : state.getAllOf(State.FOREST)) {
                     if (forest.getLocation().isAdjacent(destination)) {
-                        toReturn += BIG_VALUE;
+                        toReturn += SMALL_VALUE;
                     }
                 }
             }
@@ -71,7 +71,7 @@ public class MoveTo extends Step {
             if (goal.GOLD_AMOUNT > state.GOLD_AMOUNT) { //If we need more gold
                 for (Unit mine : state.getAllOf(State.GOLD_MINE)) {
                     if (mine.getLocation().isAdjacent(destination)) {
-                        toReturn += BIG_VALUE;
+                        toReturn += SMALL_VALUE;
                     }
                 }
             }

@@ -8,7 +8,7 @@ import planner.State;
 import edu.cwru.sepia.action.Action;
 
 public class HarvestWood extends Step {
-    private Integer forestID;
+    public Integer forestID;
 
     public HarvestWood(Integer unitID, Integer forrestID, State state) {
         super(unitID, state);
@@ -41,9 +41,14 @@ public class HarvestWood extends Step {
                 state.getUnitBy(forestID).getWood() > 0;
     }
 
-	@Override
-	public Integer heuristicValue(State goal) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Integer heuristicValue(State goal) {
+        Integer toReturn = 0;
+
+        if (goal.WOOD_AMOUNT > state.WOOD_AMOUNT) {
+            toReturn += MEDIUM_VALUE;
+        }
+
+        return toReturn;
+    }
 }

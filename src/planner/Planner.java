@@ -1,6 +1,8 @@
 package planner;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,26 +27,67 @@ public class Planner {
     public State getInitial() {
         return initial;
     }
-    public void setInitial(State initial) {
+    public void setInitial(State initial, State goal) {
         this.initial = initial;
-    }
-    public State getGoal() {
-        return goal;
-    }
-    public void setGoal(State goal) {
         this.goal = goal;
     }
 
-    public List<Step> findPathToGoal() {
-        List<Step> steps = new ArrayList<Step>();
-        
-        
-        
+    public List<Set<Step>> findPathToGoal() {
+        List<Set<Step>> steps = new ArrayList<Set<Step>>();
+        State latest = initial;
+
+        while (latest.GOLD_AMOUNT < goal.GOLD_AMOUNT &&
+                latest.WOOD_AMOUNT < goal.WOOD_AMOUNT) {
+            Set<Step> stepsForAllPeasants = new HashSet<Step>();
+            
+            Map<Unit, List<Step>> movesForPeasants = getPossibleMoves(latest);
+
+            for (List<Step> possibleSteps : movesForPeasants.values()) {
+                Collections.sort(possibleSteps, new Comparator<Step>() {
+                    @Override
+                    public int compare(Step o1, Step o2) {
+                        return o1.heuristicValue(goal).compareTo(o2.heuristicValue(goal));
+                    }
+                });
+
+                stepsForAllPeasants.add(possibleSteps.get(0));
+            }
+
+            steps.add(stepsForAllPeasants);
+
+            /* Mutate out world state */
+            for (Step step : stepsForAllPeasants) {
+                if (step instanceof MoveTo) {
+                    latest.getUnitBy(step.unitID).setLocation(((MoveTo)step).destination);
+                } else if (step instanceof HarvestGold) {
+                    latest.getUnitBy(step.unitID).setPayloadSize(100);
+                    latest.getUnitBy(step.unitID).setPayloadType(State.WOOD);
+                    
+                    latest.getUnitBy(((HarvestGold)step).unitID).setPayloadSize(
+                            latest.getUnitBy(((HarvestGold)step).goldMineID).getPayloadSize() - 100);
+                } else if (step instanceof HarvestWood) {
+                    latest.getUnitBy(step.unitID).setPayloadSize(100);
+                    latest.getUnitBy(step.unitID).setPayloadType(State.GOLD);
+                    
+                    latest.getUnitBy(((HarvestWood)step).unitID).setPayloadSize(
+                            latest.getUnitBy(((HarvestWood)step).forestID).getPayloadSize() - 100);
+                } else if (step instanceof Deposit) {
+                    if (latest.getUnitBy(step.unitID).getPayloadType().equals(State.GOLD)) {
+                        latest.GOLD_AMOUNT += latest.getUnitBy(step.unitID).getPayloadSize();
+                    } else if (latest.getUnitBy(step.unitID).getPayloadType().equals(State.WOOD)) {
+                        latest.WOOD_AMOUNT += latest.getUnitBy(step.unitID).getPayloadSize();
+                    }
+                    
+                    latest.getUnitBy(step.unitID).setPayloadSize(0);
+                }
+            }
+        }
+
         return steps;
     }
 
-    private static Map<Unit, Set<Step>> getPossibleMoves(State state) {
-        Map<Unit, Set<Step>> possibleMoves = new HashMap<Unit, Set<Step>>();
+    private static Map<Unit, List<Step>> getPossibleMoves(State state) {
+        Map<Unit, List<Step>> possibleMoves = new HashMap<Unit, List<Step>>();
 
         Set<Unit> peasants = state.getAllOf(State.PEASANT);
         Set<Unit> townhalls = state.getAllOf(State.TOWN_HALL);
@@ -52,7 +95,7 @@ public class Planner {
         Set<Unit> forests = state.getAllOf(State.FOREST);
 
         for (Unit peasant : peasants) {
-            Set<Step> stepsforPeasant = new HashSet<Step>();
+            List<Step> stepsforPeasant = new ArrayList<Step>();
 
             /* Deposit */
             for (Unit townhall : townhalls) {
@@ -91,7 +134,7 @@ public class Planner {
     }
 
     public static class Square {
-    	public Integer x;
+        public Integer x;
         public Integer y;
         Integer distance;
 

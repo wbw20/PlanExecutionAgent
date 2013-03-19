@@ -17,7 +17,7 @@ public class HarvestGold extends Step {
     }
 
     @Override
-    Map<Integer, Action> getActions() {
+    public Map<Integer, Action> getActions() {
         Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
 
         toReturn.put(unitID, Action.createCompoundGather(unitID, goldMineID));

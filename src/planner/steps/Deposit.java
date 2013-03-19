@@ -13,7 +13,7 @@ public class Deposit extends Step {
     }
 
     @Override
-    Map<Integer, Action> getActions() {
+    public Map<Integer, Action> getActions() {
         Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
         
         toReturn.put(unitID, Action.createCompoundDeposit(unitID, getTownHall().getID()));

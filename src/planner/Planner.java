@@ -24,7 +24,7 @@ import edu.cwru.sepia.util.Direction;
 public class Planner {
     private State initial;
     private State goal;
-    
+
     public Planner(State initial, State goal) {
         this.initial = initial;
         this.goal = goal;
@@ -56,15 +56,6 @@ public class Planner {
                     }
                 });
 
-                System.out.print("NON-MOVE: ");
-                for (Step step : possibleSteps) {
-                	if (!(step instanceof MoveTo)) {
-                		System.out.print(step + ", ");
-                	}
-                }
-                System.out.println();
-                System.out.println("OPTIMAL ( + " + possibleSteps.get(0).heuristicValue(goal) + "): " + possibleSteps.get(0));
-                
                 stepsForAllPeasants.add(possibleSteps.get(0));
             }
 
@@ -97,9 +88,6 @@ public class Planner {
                 }
             }
         }
-        
-        System.out.println("DONE: gold is " + initial.GOLD_AMOUNT + ", wood is " + initial.WOOD_AMOUNT + ".");
-        System.exit(0);
 
         return steps;
     }

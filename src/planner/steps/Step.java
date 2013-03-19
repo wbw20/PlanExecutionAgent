@@ -25,7 +25,7 @@ public abstract class Step {
         this.state = state;
     }
 
-    abstract Map<Integer, Action> getActions();
+    public abstract Map<Integer, Action> getActions();
 
     public abstract Boolean arePrerequisitesMet();
 

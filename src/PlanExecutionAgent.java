@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import planner.Planner;
 import planner.Planner.Square;
+import planner.steps.Step;
 import planner.State;
 import planner.Unit;
 
@@ -20,9 +22,11 @@ import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
 public class PlanExecutionAgent extends Agent {
 
+    private static List<Set<Step>> pathToGoalState;
+    private static Square destination;
+
     public PlanExecutionAgent(int playernum) {
         super(playernum);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
@@ -54,17 +58,22 @@ public class PlanExecutionAgent extends Agent {
             clone.setType(view.getType().toString());
             clone.setPayloadSize(view.getAmountRemaining());
             initial.add(clone);
-            System.out.println(clone.dynamicValues);
         }
 
         goal.GOLD_AMOUNT = 1000;
         goal.WOOD_AMOUNT = 1000;
 
         Planner planner = new Planner(initial, goal);
-        planner.findPathToGoal();
+        pathToGoalState = planner.findPathToGoal();
 
-        Map<Integer, Action> moves = new HashMap<Integer, Action>();
-        return moves;
+        if (pathToGoalState.isEmpty()) {
+            System.out.println("No solution exists.");
+            System.exit(-1);
+        }
+
+//        Map<Integer, Action> moves = new HashMap<Integer, Action>();
+//        return moves;
+        return null;
     }
 
     @Override
@@ -75,8 +84,27 @@ public class PlanExecutionAgent extends Agent {
 
     @Override
     public Map<Integer, Action> middleStep(StateView arg0, HistoryView arg1) {
-        // TODO Auto-generated method stub
-        return null;
+        Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
+
+        System.out.println(pathToGoalState.size());
+
+        if (!pathToGoalState.isEmpty()) {
+            Set<Step> stepsToExecute = pathToGoalState.get(0);
+
+            for (Step step : stepsToExecute) {
+                for (Integer id : step.getActions().keySet()) {
+                    sepiaActions.put(id, step.getActions().get(id));
+                }
+            }
+
+            pathToGoalState.remove(0);
+        } else {
+            System.exit(0);
+        }
+        
+        System.out.println(sepiaActions);
+
+        return sepiaActions;
     }
 
     @Override

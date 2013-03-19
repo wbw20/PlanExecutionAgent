@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import planner.Unit;
+import planner.steps.BuildPeasant;
 import planner.steps.Deposit;
 import planner.steps.HarvestGold;
 import planner.steps.HarvestWood;
@@ -25,9 +26,13 @@ public class Planner {
     private State initial;
     private State goal;
 
-    public Planner(State initial, State goal) {
+    //only for accessing templates
+    private StateView reference;
+
+    public Planner(State initial, State goal, StateView reference) {
         this.initial = initial;
         this.goal = goal;
+        this.reference = reference;
     }
 
     public State getInitial() {
@@ -44,11 +49,11 @@ public class Planner {
 
         while (latest.GOLD_AMOUNT < goal.GOLD_AMOUNT ||
                 latest.WOOD_AMOUNT < goal.WOOD_AMOUNT) {
-            Set<Step> stepsForAllPeasants = new HashSet<Step>();
-            
-            Map<Unit, List<Step>> movesForPeasants = getPossibleMoves(latest);
+            Set<Step> stepsForAllUnits = new HashSet<Step>();
 
-            for (List<Step> possibleSteps : movesForPeasants.values()) {
+            Map<Unit, List<Step>> movesForUnits = getPossibleMoves(latest, reference);
+
+            for (List<Step> possibleSteps : movesForUnits.values()) {
                 Collections.sort(possibleSteps, new Comparator<Step>() {
                     @Override
                     public int compare(Step o1, Step o2) {
@@ -56,13 +61,13 @@ public class Planner {
                     }
                 });
 
-                stepsForAllPeasants.add(possibleSteps.get(0));
+                stepsForAllUnits.add(possibleSteps.get(0));
             }
 
-            steps.add(stepsForAllPeasants);
+            steps.add(stepsForAllUnits);
 
             /* Mutate out world state */
-            for (Step step : stepsForAllPeasants) {
+            for (Step step : stepsForAllUnits) {
                 if (step instanceof MoveTo) {
                     latest.getUnitBy(step.unitID).setLocation(((MoveTo)step).destination);
                 } else if (step instanceof HarvestGold) {
@@ -85,6 +90,14 @@ public class Planner {
                     }
                     
                     latest.getUnitBy(step.unitID).setPayloadSize(0);
+                } else if (step instanceof BuildPeasant) {
+                    Unit peasant = new Unit((int)(Math.random()*1000000));
+                    peasant.setLocation(new Square(0,0));
+                    peasant.setPayloadSize(0);
+                    peasant.setType(Unit.PEASANT);
+                    latest.add(peasant);
+
+                    latest.GOLD_AMOUNT -= 400;
                 }
             }
         }
@@ -92,7 +105,7 @@ public class Planner {
         return steps;
     }
 
-    private static Map<Unit, List<Step>> getPossibleMoves(State state) {
+    private static Map<Unit, List<Step>> getPossibleMoves(State state, StateView reference) {
         Map<Unit, List<Step>> possibleMoves = new HashMap<Unit, List<Step>>();
 
         Set<Unit> peasants = state.getAllOf(Unit.PEASANT);
@@ -136,6 +149,15 @@ public class Planner {
             }
 
             possibleMoves.put(peasant, stepsforPeasant);
+        }
+
+        for(Unit townhall : townhalls) {
+            Step buildPeasant = new BuildPeasant(townhall.getID(), state, reference.getTemplate(0, "Peasant").getID());
+            if (buildPeasant.arePrerequisitesMet()) {
+                List<Step> stepsForTownHall = new ArrayList<Step>();
+                stepsForTownHall.add(buildPeasant);
+                possibleMoves.put(townhall, stepsForTownHall);
+            }
         }
 
         return possibleMoves;

@@ -24,7 +24,7 @@ import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 public class PlanExecutionAgent extends Agent {
 
     private static List<Set<Step>> pathToGoalState;
-    private static Square destination;
+    private static Map<Integer, Square> peasantsTodestinations = new HashMap<Integer, Square>();
 
     public PlanExecutionAgent(int playernum) {
         super(playernum);
@@ -59,12 +59,14 @@ public class PlanExecutionAgent extends Agent {
             clone.setType(view.getType().toString());
             clone.setPayloadSize(view.getAmountRemaining());
             initial.add(clone);
+            
+            System.out.println(clone.dynamicValues);
         }
 
         goal.GOLD_AMOUNT = 1000;
         goal.WOOD_AMOUNT = 1000;
 
-        Planner planner = new Planner(initial, goal);
+        Planner planner = new Planner(initial, goal, stateView);
         pathToGoalState = planner.findPathToGoal();
 
         if (pathToGoalState.isEmpty()) {
@@ -93,9 +95,9 @@ public class PlanExecutionAgent extends Agent {
             for (Step step : stepsToExecute) {
                 for (Integer id : step.getActions().keySet()) {
                     //we have arrived, time for next action
-                    if (destination == null || new Square(arg0.getUnit(id)).equals(destination)) {
+                    if (peasantsTodestinations.get(id) == null || new Square(arg0.getUnit(id)).equals(peasantsTodestinations.get(id))) {
                         if (step instanceof MoveTo) {
-                            destination = ((MoveTo)step).destination;
+                            peasantsTodestinations.put(id, ((MoveTo)step).destination);
                         }
 
                         sepiaActions.put(id, step.getActions().get(id));

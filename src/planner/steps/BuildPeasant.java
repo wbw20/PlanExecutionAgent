@@ -9,13 +9,11 @@ import edu.cwru.sepia.action.Action;
 
 public class BuildPeasant extends Step {
 
-    private Integer townHallID;
     private Integer templateID;
 
-    protected BuildPeasant(Integer unitID, State state, Integer townHallID, Integer templateID) {
+    public BuildPeasant(Integer unitID, State state, Integer templateID) {
         super(unitID, state);
-        
-        this.townHallID = townHallID;
+
         this.templateID = templateID;
     }
 
@@ -23,7 +21,7 @@ public class BuildPeasant extends Step {
     public Map<Integer, Action> getActions() {
         Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
 
-        toReturn.put(unitID, Action.createCompoundBuild(townHallID, templateID, 0, 0));
+        toReturn.put(unitID, Action.createCompoundBuild(unitID, templateID, 9, 9));
 
         return toReturn;
     }

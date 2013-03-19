@@ -42,7 +42,7 @@ public class Planner {
         List<Set<Step>> steps = new ArrayList<Set<Step>>();
         State latest = initial;
 
-        while (latest.GOLD_AMOUNT < goal.GOLD_AMOUNT &&
+        while (latest.GOLD_AMOUNT < goal.GOLD_AMOUNT ||
                 latest.WOOD_AMOUNT < goal.WOOD_AMOUNT) {
             Set<Step> stepsForAllPeasants = new HashSet<Step>();
             
@@ -52,11 +52,17 @@ public class Planner {
                 Collections.sort(possibleSteps, new Comparator<Step>() {
                     @Override
                     public int compare(Step o1, Step o2) {
-                        return o1.heuristicValue(goal).compareTo(o2.heuristicValue(goal));
+                        return o2.heuristicValue(goal).compareTo(o1.heuristicValue(goal));
                     }
                 });
 
-                System.out.println("ALL: " + possibleSteps);
+                System.out.print("NON-MOVE: ");
+                for (Step step : possibleSteps) {
+                	if (!(step instanceof MoveTo)) {
+                		System.out.print(step + ", ");
+                	}
+                }
+                System.out.println();
                 System.out.println("OPTIMAL ( + " + possibleSteps.get(0).heuristicValue(goal) + "): " + possibleSteps.get(0));
                 
                 stepsForAllPeasants.add(possibleSteps.get(0));
@@ -70,15 +76,15 @@ public class Planner {
                     latest.getUnitBy(step.unitID).setLocation(((MoveTo)step).destination);
                 } else if (step instanceof HarvestGold) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
-                    latest.getUnitBy(step.unitID).setPayloadType(Unit.WOOD);
+                    latest.getUnitBy(step.unitID).setPayloadType(Unit.GOLD);
                     
-                    latest.getUnitBy(((HarvestGold)step).unitID).setPayloadSize(
+                    latest.getUnitBy(((HarvestGold)step).goldMineID).setPayloadSize(
                             latest.getUnitBy(((HarvestGold)step).goldMineID).getPayloadSize() - 100);
                 } else if (step instanceof HarvestWood) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
-                    latest.getUnitBy(step.unitID).setPayloadType(Unit.GOLD);
+                    latest.getUnitBy(step.unitID).setPayloadType(Unit.WOOD);
                     
-                    latest.getUnitBy(((HarvestWood)step).unitID).setPayloadSize(
+                    latest.getUnitBy(((HarvestWood)step).forestID).setPayloadSize(
                             latest.getUnitBy(((HarvestWood)step).forestID).getPayloadSize() - 100);
                 } else if (step instanceof Deposit) {
                     if (latest.getUnitBy(step.unitID).getPayloadType().equals(Unit.GOLD)) {
@@ -91,6 +97,9 @@ public class Planner {
                 }
             }
         }
+        
+        System.out.println("DONE: gold is " + initial.GOLD_AMOUNT + ", wood is " + initial.WOOD_AMOUNT + ".");
+        System.exit(0);
 
         return steps;
     }
@@ -138,8 +147,6 @@ public class Planner {
 
             possibleMoves.put(peasant, stepsforPeasant);
         }
-
-        System.out.println(possibleMoves);
 
         return possibleMoves;
     }

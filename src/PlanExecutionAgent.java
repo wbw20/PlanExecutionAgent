@@ -8,6 +8,7 @@ import java.util.Set;
 
 import planner.Planner;
 import planner.Planner.Square;
+import planner.steps.MoveTo;
 import planner.steps.Step;
 import planner.State;
 import planner.Unit;
@@ -71,8 +72,6 @@ public class PlanExecutionAgent extends Agent {
             System.exit(-1);
         }
 
-//        Map<Integer, Action> moves = new HashMap<Integer, Action>();
-//        return moves;
         return null;
     }
 
@@ -93,11 +92,18 @@ public class PlanExecutionAgent extends Agent {
 
             for (Step step : stepsToExecute) {
                 for (Integer id : step.getActions().keySet()) {
-                    sepiaActions.put(id, step.getActions().get(id));
+                    //we have arrived, time for next action
+                    if (destination == null || new Square(arg0.getUnit(id)).equals(destination)) {
+                        if (step instanceof MoveTo) {
+                            destination = ((MoveTo)step).destination;
+                        }
+
+                        sepiaActions.put(id, step.getActions().get(id));
+                        pathToGoalState.remove(0);
+                    }
                 }
             }
 
-            pathToGoalState.remove(0);
         } else {
             System.exit(0);
         }

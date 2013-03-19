@@ -57,6 +57,7 @@ public class MoveTo extends Step {
             for (Unit townhall : state.getAllOf(Unit.TOWN_HALL)) {
                 if (destination.isAdjacent(townhall.getLocation())) {
                     toReturn += BIG_VALUE;
+                    toReturn -= state.getUnitBy(unitID).getLocation().distanceTo(destination);
                 }
             }
         } else { //The peasant is empty-handed
@@ -64,6 +65,7 @@ public class MoveTo extends Step {
                 for (Unit forest : state.getAllOf(Unit.FOREST)) {
                     if (forest.getLocation().isAdjacent(destination)) {
                         toReturn += SMALL_VALUE;
+//                        toReturn += 50 - state.getUnitBy(unitID).getLocation().distanceTo(destination);
                     }
                 }
             }
@@ -72,6 +74,7 @@ public class MoveTo extends Step {
                 for (Unit mine : state.getAllOf(Unit.GOLD_MINE)) {
                     if (mine.getLocation().isAdjacent(destination)) {
                         toReturn += SMALL_VALUE;
+//                        toReturn += 40 -  state.getUnitBy(unitID).getLocation().distanceTo(destination);
                     }
                 }
             }

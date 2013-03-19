@@ -15,8 +15,8 @@
 	<ModelParameters>
 		<Conquest>false</Conquest>
 		<Midas>true</Midas>
-		<Requirement Name="environment.model.RequiredGold" Value="200"/>
-		<Requirement Name="environment.model.RequiredWood" Value="200"/>
+		<Requirement Name="environment.model.RequiredGold" Value="1000"/>
+		<Requirement Name="environment.model.RequiredWood" Value="1000"/>
 		<ManifestDestiny>false</ManifestDestiny>
 		<TimeLimit>100000</TimeLimit>
 	</ModelParameters>

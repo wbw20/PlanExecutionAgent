@@ -130,7 +130,9 @@ public class Planner {
             /* Move To */
             for (Square unnoccupied : state.getEmptyTiles()) {
                 Step moveTo = new MoveTo(peasant.getID(), unnoccupied, state);
-                stepsforPeasant.add(moveTo);
+                if (moveTo.arePrerequisitesMet()) {
+                    stepsforPeasant.add(moveTo);
+                }
             }
 
             possibleMoves.put(peasant, stepsforPeasant);
@@ -207,6 +209,11 @@ public class Planner {
                     return null;
                 }
             }
+        }
+
+        public Integer distanceTo(Square square) {
+            return Math.abs(square.x - this.x) +
+                    Math.abs(square.y - this.y);
         }
 
         Set<Square> getAdjacent(StateView state) {

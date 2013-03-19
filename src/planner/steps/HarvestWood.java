@@ -38,7 +38,7 @@ public class HarvestWood extends Step {
     @Override
     public Boolean arePrerequisitesMet() {
         return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(forestID).getLocation()) &&
-                state.getUnitBy(forestID).getWood() > 0;
+                state.getUnitBy(forestID).getPayloadSize() > 0;
     }
 
     @Override

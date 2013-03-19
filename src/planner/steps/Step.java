@@ -6,7 +6,7 @@ import java.util.Map;
 
 import planner.State;
 import planner.Planner.Square;
-import planner.State.Unit;
+import planner.Unit;
 
 import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.environment.model.state.State.StateView;
@@ -36,7 +36,7 @@ public abstract class Step {
 
     protected Unit getTownHall() {
         for (Unit u : state.getUnits()) {
-            if (u.getType().equals(State.TOWN_HALL)) {
+            if (u.getType().equals(Unit.TOWN_HALL)) {
                 return u;
             }
         }
@@ -48,7 +48,7 @@ public abstract class Step {
         List<Unit> peasantLocations = new ArrayList<Unit>();
 
         for (Unit u : state.getUnits()) {
-            if (u.getType().equals(State.PEASANT)) {
+            if (u.getType().equals(Unit.PEASANT)) {
                 peasantLocations.add(u);
             }
         }

@@ -38,7 +38,7 @@ public class HarvestGold extends Step {
     @Override
     public Boolean arePrerequisitesMet() {
         return state.getUnitBy(unitID).getLocation().isAdjacent(state.getUnitBy(goldMineID).getLocation()) &&
-                state.getUnitBy(goldMineID).getGold() > 0;
+                state.getUnitBy(goldMineID).getPayloadSize() > 0;
     }
 
     @Override

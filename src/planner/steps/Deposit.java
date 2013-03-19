@@ -28,18 +28,20 @@ public class Deposit extends Step {
 
     /**
      * The prerequisites for a Deposit operation are that the peasant who will
-     * be making the deposit must be next to the Town Hall.
+     * be making the deposit must be next to the Town Hall and carrying something.
      */
     @Override
     public Boolean arePrerequisitesMet() {
-        return state.getUnitBy(unitID).getLocation().isAdjacent(getTownHall().getLocation());
+        return state.getUnitBy(unitID).getLocation().isAdjacent(getTownHall().getLocation()) &&
+               state.getUnitBy(unitID).getPayloadSize() > 0;
     }
 
     @Override
     public Integer heuristicValue(State goal) {
         Integer toReturn = 0;
 
-        if (state.getUnitBy(unitID).getLocation().isAdjacent(getTownHall().getLocation())) {
+        if (state.getUnitBy(unitID).getLocation().isAdjacent(getTownHall().getLocation()) &&
+            state.getUnitBy(unitID).getPayloadSize() > 0) {
             toReturn += BIG_VALUE;
         }
 

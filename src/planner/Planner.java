@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import planner.State.Unit;
+import planner.Unit;
 import planner.steps.Deposit;
 import planner.steps.HarvestGold;
 import planner.steps.HarvestWood;
 import planner.steps.MoveTo;
 import planner.steps.Step;
 
+import edu.cwru.sepia.environment.model.state.ResourceNode.ResourceView;
 import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 import edu.cwru.sepia.util.Direction;
@@ -23,13 +24,18 @@ import edu.cwru.sepia.util.Direction;
 public class Planner {
     private State initial;
     private State goal;
+    
+    public Planner(State initial, State goal) {
+        this.initial = initial;
+        this.goal = goal;
+    }
 
     public State getInitial() {
         return initial;
     }
-    public void setInitial(State initial, State goal) {
-        this.initial = initial;
-        this.goal = goal;
+
+    public State getGoal() {
+        return goal;
     }
 
     public List<Set<Step>> findPathToGoal() {
@@ -50,6 +56,9 @@ public class Planner {
                     }
                 });
 
+                System.out.println("ALL: " + possibleSteps);
+                System.out.println("OPTIMAL ( + " + possibleSteps.get(0).heuristicValue(goal) + "): " + possibleSteps.get(0));
+                
                 stepsForAllPeasants.add(possibleSteps.get(0));
             }
 
@@ -61,20 +70,20 @@ public class Planner {
                     latest.getUnitBy(step.unitID).setLocation(((MoveTo)step).destination);
                 } else if (step instanceof HarvestGold) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
-                    latest.getUnitBy(step.unitID).setPayloadType(State.WOOD);
+                    latest.getUnitBy(step.unitID).setPayloadType(Unit.WOOD);
                     
                     latest.getUnitBy(((HarvestGold)step).unitID).setPayloadSize(
                             latest.getUnitBy(((HarvestGold)step).goldMineID).getPayloadSize() - 100);
                 } else if (step instanceof HarvestWood) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
-                    latest.getUnitBy(step.unitID).setPayloadType(State.GOLD);
+                    latest.getUnitBy(step.unitID).setPayloadType(Unit.GOLD);
                     
                     latest.getUnitBy(((HarvestWood)step).unitID).setPayloadSize(
                             latest.getUnitBy(((HarvestWood)step).forestID).getPayloadSize() - 100);
                 } else if (step instanceof Deposit) {
-                    if (latest.getUnitBy(step.unitID).getPayloadType().equals(State.GOLD)) {
+                    if (latest.getUnitBy(step.unitID).getPayloadType().equals(Unit.GOLD)) {
                         latest.GOLD_AMOUNT += latest.getUnitBy(step.unitID).getPayloadSize();
-                    } else if (latest.getUnitBy(step.unitID).getPayloadType().equals(State.WOOD)) {
+                    } else if (latest.getUnitBy(step.unitID).getPayloadType().equals(Unit.WOOD)) {
                         latest.WOOD_AMOUNT += latest.getUnitBy(step.unitID).getPayloadSize();
                     }
                     
@@ -89,10 +98,10 @@ public class Planner {
     private static Map<Unit, List<Step>> getPossibleMoves(State state) {
         Map<Unit, List<Step>> possibleMoves = new HashMap<Unit, List<Step>>();
 
-        Set<Unit> peasants = state.getAllOf(State.PEASANT);
-        Set<Unit> townhalls = state.getAllOf(State.TOWN_HALL);
-        Set<Unit> goldMines = state.getAllOf(State.GOLD_MINE);
-        Set<Unit> forests = state.getAllOf(State.FOREST);
+        Set<Unit> peasants = state.getAllOf(Unit.PEASANT);
+        Set<Unit> townhalls = state.getAllOf(Unit.TOWN_HALL);
+        Set<Unit> goldMines = state.getAllOf(Unit.GOLD_MINE);
+        Set<Unit> forests = state.getAllOf(Unit.FOREST);
 
         for (Unit peasant : peasants) {
             List<Step> stepsforPeasant = new ArrayList<Step>();
@@ -130,6 +139,8 @@ public class Planner {
             possibleMoves.put(peasant, stepsforPeasant);
         }
 
+        System.out.println(possibleMoves);
+
         return possibleMoves;
     }
 
@@ -138,9 +149,14 @@ public class Planner {
         public Integer y;
         Integer distance;
 
-        Square(UnitView unit) {
+        public Square(UnitView unit) {
             this.x = unit.getXPosition();
             this.y = unit.getYPosition();
+        }
+
+        public Square(ResourceView resource) {
+            this.x = resource.getXPosition();
+            this.y = resource.getYPosition();
         }
 
         Square(Integer x, Integer y) {

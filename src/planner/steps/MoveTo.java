@@ -6,7 +6,7 @@ import java.util.Map;
 import planner.Planner;
 import planner.State;
 import planner.Planner.Square;
-import planner.State.Unit;
+import planner.Unit;
 import edu.cwru.sepia.action.Action;
 
 public class MoveTo extends Step {
@@ -54,14 +54,14 @@ public class MoveTo extends Step {
 
         //The peasant is carrying something
         if (state.getUnitBy(unitID).getPayloadSize() > 0) {
-            for (Unit townhall : state.getAllOf(State.TOWN_HALL)) {
+            for (Unit townhall : state.getAllOf(Unit.TOWN_HALL)) {
                 if (destination.isAdjacent(townhall.getLocation())) {
                     toReturn += BIG_VALUE;
                 }
             }
         } else { //The peasant is empty-handed
             if (goal.WOOD_AMOUNT > state.WOOD_AMOUNT) { //If we need more wood
-                for (Unit forest : state.getAllOf(State.FOREST)) {
+                for (Unit forest : state.getAllOf(Unit.FOREST)) {
                     if (forest.getLocation().isAdjacent(destination)) {
                         toReturn += SMALL_VALUE;
                     }
@@ -69,7 +69,7 @@ public class MoveTo extends Step {
             }
 
             if (goal.GOLD_AMOUNT > state.GOLD_AMOUNT) { //If we need more gold
-                for (Unit mine : state.getAllOf(State.GOLD_MINE)) {
+                for (Unit mine : state.getAllOf(Unit.GOLD_MINE)) {
                     if (mine.getLocation().isAdjacent(destination)) {
                         toReturn += SMALL_VALUE;
                     }

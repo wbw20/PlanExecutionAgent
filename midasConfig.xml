@@ -2,7 +2,7 @@
 	<Map>rc_3m5t.xml</Map>
 	<Player Id="0">
 		<AgentClass>
-			<ClassName>edu.cwru.sepia.agent.visual.VisualAgent</ClassName>
+			<ClassName>PlanExecutionAgent</ClassName>
 			<Argument>true</Argument>
 			<Argument>false</Argument>
 		</AgentClass>

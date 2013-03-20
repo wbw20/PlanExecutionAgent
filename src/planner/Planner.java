@@ -25,6 +25,7 @@ import edu.cwru.sepia.util.Direction;
 public class Planner {
     private State initial;
     private State goal;
+    private Integer peasantIDCount = 9;
 
     //only for accessing templates
     private StateView reference;
@@ -66,20 +67,20 @@ public class Planner {
 
             steps.add(stepsForAllUnits);
 
-            /* Mutate out world state */
+            /* Mutate our world state */
             for (Step step : stepsForAllUnits) {
                 if (step instanceof MoveTo) {
                     latest.getUnitBy(step.unitID).setLocation(((MoveTo)step).destination);
                 } else if (step instanceof HarvestGold) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
                     latest.getUnitBy(step.unitID).setPayloadType(Unit.GOLD);
-                    
+
                     latest.getUnitBy(((HarvestGold)step).goldMineID).setPayloadSize(
                             latest.getUnitBy(((HarvestGold)step).goldMineID).getPayloadSize() - 100);
                 } else if (step instanceof HarvestWood) {
                     latest.getUnitBy(step.unitID).setPayloadSize(100);
                     latest.getUnitBy(step.unitID).setPayloadType(Unit.WOOD);
-                    
+
                     latest.getUnitBy(((HarvestWood)step).forestID).setPayloadSize(
                             latest.getUnitBy(((HarvestWood)step).forestID).getPayloadSize() - 100);
                 } else if (step instanceof Deposit) {
@@ -88,10 +89,10 @@ public class Planner {
                     } else if (latest.getUnitBy(step.unitID).getPayloadType().equals(Unit.WOOD)) {
                         latest.WOOD_AMOUNT += latest.getUnitBy(step.unitID).getPayloadSize();
                     }
-                    
+
                     latest.getUnitBy(step.unitID).setPayloadSize(0);
                 } else if (step instanceof BuildPeasant) {
-                    Unit peasant = new Unit((int)(Math.random()*1000000));
+                    Unit peasant = new Unit(peasantIDCount + 1); peasantIDCount++;
                     peasant.setLocation(new Square(0,0));
                     peasant.setPayloadSize(0);
                     peasant.setType(Unit.PEASANT);

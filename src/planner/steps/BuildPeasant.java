@@ -21,18 +21,22 @@ public class BuildPeasant extends Step {
     public Map<Integer, Action> getActions() {
         Map<Integer, Action> toReturn = new HashMap<Integer, Action>();
 
-        toReturn.put(unitID, Action.createCompoundBuild(unitID, templateID, 9, 9));
+        toReturn.put(unitID, Action.createCompoundProduction(unitID, templateID));
 
         return toReturn;
     }
 
     @Override
     public Boolean arePrerequisitesMet() {
-        return state.getAllOf(Unit.PEASANT).size() < 3 && state.GOLD_AMOUNT > 400;
+        return state.getAllOf(Unit.PEASANT).size() < 3 && state.GOLD_AMOUNT >= 400;
     }
 
     @Override
     public Integer heuristicValue(State goal) {
+        if (goal.WOOD_AMOUNT + goal.GOLD_AMOUNT <= 2000) {
+            return 0;
+        }
+
         return Step.BIG_VALUE;
     }
 

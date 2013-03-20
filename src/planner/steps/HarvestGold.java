@@ -46,7 +46,7 @@ public class HarvestGold extends Step {
         Integer toReturn = 0;
 
         if (goal.GOLD_AMOUNT > state.GOLD_AMOUNT) {
-            toReturn += MEDIUM_VALUE;
+            toReturn += MEDIUM_LARGE_VALUE;
         }
 
         return toReturn;

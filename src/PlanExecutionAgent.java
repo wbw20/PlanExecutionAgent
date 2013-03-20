@@ -88,6 +88,11 @@ public class PlanExecutionAgent extends Agent {
         Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();
 
         System.out.println(pathToGoalState.size());
+        for (UnitView view : arg0.getAllUnits()) {
+        	if (view.getTemplateView().getName().equals("Peasant")) {
+        		System.out.println("ID:    " + view.getID());
+        	}
+        }
 
         if (!pathToGoalState.isEmpty()) {
             Set<Step> stepsToExecute = pathToGoalState.get(0);
@@ -95,7 +100,8 @@ public class PlanExecutionAgent extends Agent {
             for (Step step : stepsToExecute) {
                 for (Integer id : step.getActions().keySet()) {
                     //we have arrived, time for next action
-                    if (peasantsTodestinations.get(id) == null || new Square(arg0.getUnit(id)).equals(peasantsTodestinations.get(id))) {
+                	System.out.println(arg0.getAllUnits());
+                    if (arg0.getUnit(id) != null && (peasantsTodestinations.get(id) == null || new Square(arg0.getUnit(id)).equals(peasantsTodestinations.get(id)))) {
                         if (step instanceof MoveTo) {
                             peasantsTodestinations.put(id, ((MoveTo)step).destination);
                         }

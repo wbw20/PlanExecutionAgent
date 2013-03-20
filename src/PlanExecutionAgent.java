@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -39,6 +42,9 @@ public class PlanExecutionAgent extends Agent {
         initial.GOLD_AMOUNT = 0;
         initial.WOOD_AMOUNT = 0;
 
+        goal.GOLD_AMOUNT = 200;
+        goal.WOOD_AMOUNT = 200;
+
         initial.BOARD_DIMENSION_X = stateView.getXExtent();
         initial.BOARD_DIMENSION_Y = stateView.getYExtent();
 
@@ -59,15 +65,22 @@ public class PlanExecutionAgent extends Agent {
             clone.setType(view.getType().toString());
             clone.setPayloadSize(view.getAmountRemaining());
             initial.add(clone);
-            
-            System.out.println(clone.dynamicValues);
         }
-
-        goal.GOLD_AMOUNT = 1000;
-        goal.WOOD_AMOUNT = 1000;
 
         Planner planner = new Planner(initial, goal, stateView);
         pathToGoalState = planner.findPathToGoal();
+
+        FileWriter fstream;
+		try {
+			fstream = new FileWriter("Plan.txt");
+	        BufferedWriter out = new BufferedWriter(fstream);
+	        
+	        printPlan(out, goal, pathToGoalState);
+	        
+	        out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
         if (pathToGoalState.isEmpty()) {
             System.out.println("No solution exists.");
@@ -75,6 +88,34 @@ public class PlanExecutionAgent extends Agent {
         }
 
         return null;
+    }
+    
+    private void printPlan(BufferedWriter out, State goal, List<Set<Step>> stepList) {
+        try {
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+            out.write("INITIAL STATE:  0 gold, 0 wood" + "\n" +
+                      "GOAL STATE:  " + goal.GOLD_AMOUNT + " gold, " + goal.WOOD_AMOUNT + " wood" + "\n" + "\n");
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+            out.write("---------------------------------------------------------------------------------------------" + "\n");
+
+            int stepNumber = 0;
+            
+            for (Set<Step> steps : stepList) {
+                out.write("\n");
+                out.write("---------------------------------- Step " + stepNumber + " ----------------------------------" + "\n");
+                for (Step step : steps) {
+                    out.write(step.toString() + "\n");
+                }
+                stepNumber++;
+                out.write("\n");
+            }
+            out.write("\n"+"\n"+"\n"+"\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -89,9 +130,9 @@ public class PlanExecutionAgent extends Agent {
 
         System.out.println(pathToGoalState.size());
         for (UnitView view : arg0.getAllUnits()) {
-        	if (view.getTemplateView().getName().equals("Peasant")) {
-        		System.out.println("ID:    " + view.getID());
-        	}
+            if (view.getTemplateView().getName().equals("Peasant")) {
+                System.out.println("ID:    " + view.getID());
+            }
         }
 
         if (!pathToGoalState.isEmpty()) {
@@ -100,7 +141,7 @@ public class PlanExecutionAgent extends Agent {
             for (Step step : stepsToExecute) {
                 for (Integer id : step.getActions().keySet()) {
                     //we have arrived, time for next action
-                	System.out.println(arg0.getAllUnits());
+                    System.out.println(arg0.getAllUnits());
                     if (arg0.getUnit(id) != null && (peasantsTodestinations.get(id) == null || new Square(arg0.getUnit(id)).equals(peasantsTodestinations.get(id)))) {
                         if (step instanceof MoveTo) {
                             peasantsTodestinations.put(id, ((MoveTo)step).destination);

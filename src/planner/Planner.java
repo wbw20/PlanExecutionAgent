@@ -22,6 +22,12 @@ import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 import edu.cwru.sepia.util.Direction;
 
+/**
+ * This Planner uses A* to find a path to the goal state from the initial state.  It explores all
+ * movements possible from each state, and then branches accordingly.  It uses forward planning to
+ * check is a move has its prerequisites satisfied, and then expands that move in its search.
+ *
+ */
 public class Planner {
     private State initial;
     private State goal;

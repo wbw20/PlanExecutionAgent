@@ -12,6 +12,11 @@ import edu.cwru.sepia.action.Action;
 import edu.cwru.sepia.environment.model.state.State.StateView;
 import edu.cwru.sepia.environment.model.state.Unit.UnitView;
 
+/**
+ * Steps are the nodes in the search tree.  The subclasses of this class represent
+ * the STRIPS actions in this planning problem.
+ *
+ */
 public abstract class Step {
     public static Integer BIG_VALUE = 1000;
     public static Integer MEDIUM_LARGE_VALUE = 750;

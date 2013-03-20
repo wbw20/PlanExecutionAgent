@@ -33,6 +33,10 @@ public class PlanExecutionAgent extends Agent {
         super(playernum);
     }
 
+    /**
+     * This initial step loads in all goal states and uses the planner to find a path for them.
+     * All of the plans are written to Plan.txt, and then the first plan is executed.
+     */
     @Override
     public Map<Integer, Action> initialStep(StateView stateView, HistoryView arg1) {
 
@@ -88,18 +92,18 @@ public class PlanExecutionAgent extends Agent {
         path2 = planner2.findPathToGoal();
 
         FileWriter fstream;
-		try {
-			fstream = new FileWriter("Plan.txt");
-	        BufferedWriter out = new BufferedWriter(fstream);
+        try {
+            fstream = new FileWriter("Plan.txt");
+            BufferedWriter out = new BufferedWriter(fstream);
 
-	        printPlan(out, goal, pathToGoalState);
-	        printPlan(out, goal1, path1);
-	        printPlan(out, goal2, path2);
+            printPlan(out, goal, pathToGoalState);
+            printPlan(out, goal1, path1);
+            printPlan(out, goal2, path2);
 
-	        out.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (pathToGoalState.isEmpty()) {
             System.out.println("No solution exists.");
@@ -143,6 +147,10 @@ public class PlanExecutionAgent extends Agent {
 
     }
 
+    /**
+     * Here is where the plan is actually executed.  I do not know how to execute multiple plans in
+     * SEPIA, so this is programmed to only execute the first plan.  All of them are writen to Plan.txt
+     */
     @Override
     public Map<Integer, Action> middleStep(StateView arg0, HistoryView arg1) {
         Map<Integer, Action> sepiaActions = new HashMap<Integer, Action>();

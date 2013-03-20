@@ -38,12 +38,24 @@ public class PlanExecutionAgent extends Agent {
 
         State initial = new State();
         State goal = new State();
+        
+        State goal1 = new State();
+        State goal2 = new State();
+        
+        List<Set<Step>> path1 = new ArrayList<Set<Step>>();
+        List<Set<Step>> path2 = new ArrayList<Set<Step>>();
 
         initial.GOLD_AMOUNT = 0;
         initial.WOOD_AMOUNT = 0;
 
         goal.GOLD_AMOUNT = 200;
         goal.WOOD_AMOUNT = 200;
+
+        goal1.GOLD_AMOUNT = 1000;
+        goal1.WOOD_AMOUNT = 1000;
+
+        goal2.GOLD_AMOUNT = 3000;
+        goal2.WOOD_AMOUNT = 2000;
 
         initial.BOARD_DIMENSION_X = stateView.getXExtent();
         initial.BOARD_DIMENSION_Y = stateView.getYExtent();
@@ -70,13 +82,20 @@ public class PlanExecutionAgent extends Agent {
         Planner planner = new Planner(initial, goal, stateView);
         pathToGoalState = planner.findPathToGoal();
 
+        Planner planner1 = new Planner(initial, goal1, stateView);
+        path1 = planner1.findPathToGoal();
+        Planner planner2 = new Planner(initial, goal2, stateView);
+        path2 = planner2.findPathToGoal();
+
         FileWriter fstream;
 		try {
 			fstream = new FileWriter("Plan.txt");
 	        BufferedWriter out = new BufferedWriter(fstream);
-	        
+
 	        printPlan(out, goal, pathToGoalState);
-	        
+	        printPlan(out, goal1, path1);
+	        printPlan(out, goal2, path2);
+
 	        out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
